@@ -1,0 +1,616 @@
+Intellij Installation :
+
+Run this command, 
+gksudo gedit /usr/share/applications/idea.desktop
+//If not popup password run this command next run above command
+sudo apt-get install gksu
+
+
+#enter password
+#paste it
+[Desktop Entry]
+Name=IntelliJ IDEA
+Type=Application
+Exec=/home/hadoop/work/idea-IC-145.597.3/bin/idea.sh
+Terminal=false
+Icon=/home/hadoop/work/idea-IC-145.597.3/bin/idea.png
+Comment=Integrated Development Environment
+NoDisplay=false
+Categories=Development;IDE;
+Name[en]=IntelliJ IDEA
+
+How to install intellije i have explained in this video  please follow this video
+https://www.youtube.com/watch?v=yfCTr_TQ1Ks
+////////////
+
+
+
+
+*******************************************
+
+
+
+
+
+// scala plugin in eclipse
+https://nosqlnocry.wordpress.com/2015/03/05/setup-eclipse-to-start-developing-in-spark-scala/
+//steps for creating maven project in eclipse 
+http://www.devinline.com/2016/01/apache-spark-setup-in-eclipse-scala-ide.html
+
+
+// this video for scala and spark in eclipse
+https://www.youtube.com/watch?v=rR3LiXt-KA0
+
+
+// Example for spark with scala
+https://www.youtube.com/watch?v=3P__DonT_gQ
+
+// download eclipse - kelper
+http://dogdogfish.com/eclipse/installing-eclipse-4-2-3-kepler-on-ubuntu-14-04/
+
+
+Spark - Scala Integration with Eclipse::::
+
+
+Steps: 
+1) Download eclipse kepler from 
+http://dogdogfish.com/eclipse/installing-eclipse-4-2-3-kepler-on-ubuntu-14-04/
+
+2) go to downloads
+$cd ~/Downloads
+3) untar it through terminal
+$tar -xzf eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz
+4) move the eclipse into usr/local
+$sudo mv eclipse /usr/local/eclipse
+$sudo ln -s /usr/local/eclipse/eclipse /usr/bin/eclipse
+** if already installed old version then change the names
+   $sudo mv eclipse /usr/local/eclipse3
+   $ sudo ln -s /usr/local/eclipse3/eclipse /usr/bin/eclipse3
+
+
+5) go to terminal type: $ eclipse3 or eclipse
+
+
+6)eclipse opened now, add scala to the eclipse.
+go to help click Help -> install new Software ->add direct url (copied from net) like below
+go to site: http://scala-ide.org/download/prev-stable.html
+ select suitable scala version like below
+http://download.scala-ide.org/sdk/helium/e38/scala210/stable/site
+
+next select all , then next , then finish, it will take few minutes, once completed it will ask for restart the eclipse.ok.
+
+
+Now scala perspective came to your eclipse.
+
+6) ***************
+if Maven is not installed, thenn go to Help -> Eclipse Market Place next search for Maven -> click on Maven Integration for Eclipse(Luna) - m2e.
+
+  Now create spark with scala application so we need to create project with Maven.
+for that, first go to new->project->select Maven -> Maven project -> next -> next-> enter groupId like: com.masthan.spark.practiceexample
+and enter Artifact-Id like : Spark_Example
+
+-> Progress takes 10 minutes to load the application
+ now Maven project created.
+
+7) Now initially java project is created, to make this application as Scala , right click on project goto configure  -> Add Scala Nature.
+
+8)Now we want to add some package code to the application goto Right click on project -> Properties -> click Source -> click add Folder-> select Main folder -> click create foder in that u have to create scala foder -> next -> Add the Pattern like **/*.scala -> Finish -> Ok -> ok.
+9) Now create your own Package
+right click on src/scala/main -> select Package -> give package name.
+
+10 ) Now create scala Object WordCount.
+
+11) Add Spark nature to Application 
+open pom.xml -> select pom.xml -> add dependencies like :
+
+<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_2.10</artifactId>
+			<version>1.5.1</version>
+	</dependency>
+It will take some time 
+12) Nw write the code for WordCount: 
+package com.masthan.spark.practice.sparkexamples
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+object WordCount {
+	def main(args:Array[String]) {
+		val conf = new SparkConf().setAppName("WordCount").setMaster("local");
+			  
+		val sc = new SparkContext(conf);
+		 
+		 if(args.length < 2 ) {
+		   println("Invaliad argument");
+		 }
+		 // load text file into RDD
+		 val textFile = sc.textFile(args(0));
+		 //read line and split into words based on space delimiter
+		 val lines = textFile.flatMap(line => line.split(" "));
+		 //assign count1 to each word
+		 val words = lines.map(word => (word,1));
+		 // group by key and calculate the sum with repeat times
+		 val count = words.reduceByKey(_+_);
+		 // sort the data by key
+		 val word_sort = count.sortByKey();
+		 // print the result
+		 word_sort.collect.foreach(println);
+		 // print the result into local file system
+		 //word_sort.saveAsTextFile(args(1));
+	 
+	 
+	}
+}
+
+13) run this code in console:
+
+first right click on program -> run as Configuration -> pass arguments. -> /home/projectone/one.txt then run
+
+14) Save Output in Local Run the code in local
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+object WordCount {
+	def main(args:Array[String]) {
+		val conf = new SparkConf().setAppName("WordCount").setMaster("local");
+			  
+		val sc = new SparkContext(conf);
+		 
+		 if(args.length < 2 ) {
+		   println("Invaliad argument");
+		 }
+		 // load text file into RDD
+		 val textFile = sc.textFile(args(0));
+		 //read line and split into words based on space delimiter
+		 val lines = textFile.flatMap(line => line.split(" "));
+		 //assign count1 to each word
+		 val words = lines.map(word => (word,1));
+		 // group by key and calculate the sum with repeat times
+		 val count = words.reduceByKey(_+_);
+		 // sort the data by key
+		 val word_sort = count.sortByKey();
+		 // print the result
+		 word_sort.collect.foreach(println);
+		 // print the result into local file system
+		 word_sort.saveAsTextFile(args(1));
+	 
+	 
+	}
+}
+
+
+
+Now run the code like right click-> run as configuration-> pass arguments.(now 2 arguments 1 is input file 2 is output directory
+
+
+15) Store th output in HDFS:
+Syntax: $spark-submit --class package.ojjectname --master local <JAR Path> <input file path> <output directory>
+Example : 
+$spark-submit --class com.masthan.spark.practice.sparkexamples.WordCount --master local /home/projectone/Desktop/JARS/wordcount_spark.jar hdfs://localhost:9000/spark/sparkinputs/oneone.txt hdfs://localhost:9000/spark/sparkoutputs/wordcount_spark 
+
+
+
+// Mysql Data processing for ********
+$ spark-submit --driver-class-path /home/projectone/work/hive-0.10.0/lib/mysql-connector-java-5.1.18-bin.jar  --class com.masthan.spark.practice.sparkexamples.MySqlProcessing --master local /home/projectone/Desktop/JARS/mysqldata_spark.jar
+
+
+$spark-submit --jars /home/projectone/work/hive-0.10.0/lib/mysql-connector-java-5.1.18-bin.jar  --class com.masthan.spark.practice.sparkexamples.MySqlProcessing --master local /home/projectone/Desktop/JARS/mysqldata_spark.jar
+
+$spark-submit --driver-class-path /home/projectone/work/hive-0.10.0/lib/mysql-connector-java-5.1.18-bin.jar --jars /home/projectone/work/hive-0.10.0/lib/mysql-connector-java-5.1.18-bin.jar  --class com.masthan.spark.practice.sparkexamples.MySqlProcessing --master local /home/projectone/Desktop/JARS/mysqldata_spark.jar
+
+
+
+
+<project>
+    <groupId>com.databricks.apps.logs</groupId>
+    <artifactId>log-analyzer</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+    <name>Databricks Spark Logs Analyzer</name>
+    <packaging>jar</packaging>
+    <version>1.0</version>
+    <repositories>
+        <repository>
+            <id>Akka repository</id>
+            <url>http://repo.akka.io/releases</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency> <!-- Spark -->
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency> <!-- Spark SQL -->
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency> <!-- Spark Streaming -->
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_2.10</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency> <!-- Command Line Parsing -->
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <finalName>uber-${project.artifactId}-${project.version}</finalName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+
+pom dependency for spark-csv
+
+<!-- https://mvnrepository.com/artifact/com.databricks/spark-csv_2.10 -->
+<dependency>
+    <groupId>com.databricks</groupId>
+    <artifactId>spark-csv_2.10</artifactId>
+    <version>1.4.0</version>
+</dependency>
+
+
+pom dependency for avro
+
+ <!-- http://mvnrepository.com/artifact/com.databricks/spark-avro_2.10 -->
+            <dependency>
+                <groupId>com.databricks</groupId>
+                <artifactId>spark-avro_2.10</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+
+
+
+// link for csv, avro data formats read/write
+http://stackoverflow.com/questions/38124066/sparksql-scala-with-pom 
+
+
+
+
+<!-- Hive Context     ->
+
+http://stackoverflow.com/questions/26637210/error-while-using-hive-context-in-spark-object-hive-is-not-a-member-of-package
+***** make changes in POm.xm;
+<dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-hive_${scala.tools.version}</artifactId>
+        <version>${spark.version}</version>
+</dependency>
+
+<properties>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <encoding>UTF-8</encoding>
+        <scala.tools.version>2.10</scala.tools.version>
+        <scala.version>2.10.4</scala.version>
+        <spark.version>1.5.0</spark.version>
+</properties>
+
+
+
+
+
+(OR)
+<dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-hive_2.10</artifactId>
+         <version>0.10.0</version>
+</dependency>
+
+
+
+------------------------------------------
+
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.5.6</version>
+</dependency>
+<dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.7</version>
+  </dependency>
+
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>1.7.7</version>
+  </dependency>
+
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.7.7</version>
+  </dependency>
+
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>1.7.7</version>
+  </dependency>
+
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>1.7.7</version>
+  </dependency>
+
+
+
+
+
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.5.6</version>
+</dependency>
+
+  <dependency> 
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+            <version>1.4.0</version>
+            <scope>provided</scope>
+   </dependency> 
+
+
+
+*********************************************
+ITVERSITY SPARK IN YOUTUBE.
+
+
+loading CSV Data in spark with scal
+
+https://www.youtube.com/watch?v=kfUss2n2I_s
+
+Spark-SQL
+https://www.youtube.com/watch?v=fXPQdu1OICI
+
+***********************************************
+HOW TO SETUP YOUR FIRST SPARK/SCALA PROJECT IN INTELLIJ IDE?
+https://hadoopist.wordpress.com/2016/02/03/how-to-setup-your-first-spark-project-in-intellij-ide/
+
+
+
+**********************************************
+spark-scala SBT EXAMPLE video
+https://www.youtube.com/watch?v=GGf6OqjaGw4
+
+
+
+https://www.youtube.com/watch?v=GGf6OqjaGw4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SPARK WITH JAVA IN INTELLIJ :
+
+
+
+https://sparktutorials.github.io/2015/04/02/setting-up-a-spark-project-with-maven.html
+
+
+
+
+Go to new -> project -> select maven -> next -> give group id and artifact value -> next give project name -> finish
+
+add this dependency in pom.xml
+
+<dependencies>
+    <dependency>
+        <groupId>com.sparkjava</groupId>
+        <artifactId>spark-core</artifactId>
+        <version>2.5</version>
+    </dependency>
+</dependencies>
+
+import static spark.Spark.*;
+
+
+public class Main {
+    public static void main(String[] args) {
+        get("/hello", (req, res) -> "Hello World");
+    }
+}
+
+
+
+GITHUB link for more programs::
+
+https://github.com/apache/spark/blob/master/examples/src/main/java/org/apache/spark/examples/JavaWordCount.java#L21
+
+
+
+
+
+
+Java SE 8 = 52, Java SE 7 = 51, Java SE 6.0 = 50, Java SE 5.0 = 49, JDK 1.4 = 48, JDK 1.3 = 47, JDK 1.2 = 46, JDK 1.1 = 45
+
+Read more: http://javarevisited.blogspot.com/2015/05/fixing-unsupported-majorminor-version.html#ixzz4OjiMcz2w
+
+
+javac -target 1.4 /home/projectone/scala/sparkjavaexample2/src/main/java/Example2.java
+
+javac -target 7 /home/projectone/scala/sparkjavaexample2/src/main/java/Example2.java
+
+
+java spark-framework example youtube video (jav -8)
+https://www.youtube.com/watch?v=hP4Vv_8Vv7U
+
+
+
+
+DEPENDENCIES ::::::::::::::::
+<properties>
+    <project.build.SourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <camel.version>2.10.0</camel.version>
+    <slf4j.version> 	1.6.1</slf4j.version>
+
+</properties>
+ 
+<dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>${camel.version}</version>
+  </dependency>
+<dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <version>${camel.version}</version>
+  </dependency>
+
+
+<dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.6</version>
+  </dependency>
+
+
+<dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.6</version>
+  </dependency>
+
+<dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+  </dependency>
+
+
+
+
+xxxxxxxxxxxxxxxxxx ::::WATE DEPENDENCIES ::::xxxxxxxxxxxxxxxxxxx
+
+
+        <dependency>
+            <groupId>com.restfuse</groupId>
+            <artifactId>com.eclipsesource.restfuse</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>jetty-j2se6</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+WASTE PLUGINS:
+<build>
+<plugins>
+    <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.2.v20140723</version>
+        <configuration>
+            <war>${basedir}/target/bla.war</war>
+            <httpConnector>
+                <port>8088</port>
+            </httpConnector>
+            <webApp>
+                <contextPath>/bla</contextPath>
+            </webApp>
+            <systemProperties>
+                <systemProperty>
+                    <name>config.dir</name>
+                    <value>${basedir}/target/config.dir</value>
+                </systemProperty>
+            </systemProperties>
+            <stopKey>fooStopBla</stopKey>
+            <stopPort>8089</stopPort>
+        </configuration>
+        <executions>
+            <execution>
+                <id>start-jetty</id>
+                <phase>process-test-resources</phase>
+                <goals>
+                    <goal>deploy-war</goal>
+                </goals>
+                <configuration>
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
+                    <daemon>true</daemon>
+                </configuration>
+            </execution>
+            <execution>
+                <id>stop-jetty</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                    <goal>stop</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
+
+    </build>
+
+
+
+_---------------------------------------------_
+
+
+
+
+
+
+
+
+
+
+
+
+
